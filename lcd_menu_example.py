@@ -9,7 +9,7 @@ import threading
 
 def loadFile(filename):
     """
-    Load the indicated JSON file
+    Load the indicated JSON file.
     """
     print(f"Parsing JSON file '{filename}'....")
     f = open(filename, "r")
@@ -35,11 +35,10 @@ if __name__ == "__main__":
     menu = LCDMenu(menuData, callbackHandler)
 
     # We create this event to wait on, but it never comes. How sad.
-    # This program is interrupt driven.
+    # (The menu handler, and this example, is interrupt driven.)
+    #
     waitThread = threading.Event()
-
     try:
-        menu.drawMenu()
         waitThread.wait()
     except KeyboardInterrupt:
         menu.clearScreen()
