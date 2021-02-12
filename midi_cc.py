@@ -7,13 +7,18 @@ class MidiCC:
     """
     Being a thing what encapsulates the name of a drum kit, and the corresponding MIDI Control Code.
     """
-    def __init__(self, kitname, controlcode=-1):
+    def __init__(self, kitname, controlcode):
         self.kitName = kitname
         self.controlCode = controlcode
+
     def __str__(self):
-        return f"CC {self.controlCode}: {self.kitName}"
+        """This is the method that the menu code will use to render each item.
+        """
+        return self.kitName
+
     def __repr__(self):
         return self.__str__()
+
     @staticmethod
     def decodeFromJSON(s):
         result = []
@@ -24,8 +29,10 @@ class MidiCC:
                 sublist.append(MidiCC(k[0], k[1]))
         return result
 
+
 # Test code.
-# The input file should look something like this:
+# The input file should look something like this,
+#  a list of lists of tuples of a string (the kit name) and an integer (the MIDI control code).
 #
 # [
 # [
@@ -38,7 +45,7 @@ class MidiCC:
 # ]
 #
 if __name__ =="__main__":
-    filename = "t1.json"
+    filename = "sr18_small_example.json"
     print(f"Testing parsing JSON file '{filename}'....")
     f = open(filename, "r")
     fcontents = f.read()

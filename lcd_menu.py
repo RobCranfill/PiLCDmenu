@@ -2,8 +2,6 @@
 # a wrapper for LCD menus
 # FIXME: NOT separated from the LCD drawing stuff.
 
-from midi_cc import MidiCC
-
 import digitalio
 import board
 from PIL import Image, ImageDraw, ImageFont
@@ -12,32 +10,14 @@ import RPi.GPIO as GPIO
 
 class LCDMenu:
 
-    def __init__(self, callback, filename="menudata.json"):
+    def __init__(self, menuDataListOfLists, callback):
         self._callback = callback
-        self._menuPages = LCDMenu.loadFile(filename)
+        self._menuPages = menuDataListOfLists
 
         self._selectedPage = 0
         self._selectedItem = 0 # this could be the page-nav-item, or a menu-item
 
         self.initDisplay()
-
-    # def __str__(self):
-    #     return f"CC {self.controlCode}: {self.kitName}"
-    #
-    # def __repr__(self):
-    #     return self.__str__()
-
-    @staticmethod
-    def loadFile(filename):
-        """
-        Load the indicated JSON file
-        """
-        print(f"Parsing JSON file '{filename}'....")
-        f = open(filename, "r")
-        fcontents = f.read()
-        # print(f" read: {fcontents}\n")
-        # print(f" json: {json.loads(fcontents)}\n")
-        return MidiCC.decodeFromJSON(fcontents)
 
     @staticmethod
     def init_button(pin):
@@ -72,7 +52,7 @@ class LCDMenu:
         # Button A is "next page"
         #
         if channel == BUTTON_A_pin:
-            print(f"button A - do: {self._selectedPage}.{self._selectedItem}")
+            # print(f"button A - do: {self._selectedPage}.{self._selectedItem}")
             if self._selectedItem == 0:
                 self._selectedPage += 1
                 if self._selectedPage == len(self._menuPages):
@@ -80,9 +60,9 @@ class LCDMenu:
                 self.drawMenu()
                 return
 
-            ccObj = self._menuPages[self._selectedPage][self._selectedItem-1]
-            print(f" LCDMeeu -> SEND CC {ccObj.controlCode} ({ccObj.kitName})")
-            self._callback(ccObj)
+            menuItemObj = self._menuPages[self._selectedPage][self._selectedItem-1]
+            # print(f" LCDMeeu -> SEND CC {ccObj.controlCode} ({ccObj.kitName})")
+            self._callback(menuItemObj)
             return
 
         # Must have been button B: move the cursor (selectedItem)
@@ -142,12 +122,14 @@ class LCDMenu:
 
         pageMenu = self._menuPages[self._selectedPage]
         for i in range(len(pageMenu)):
+
+            # This renders the menu item using it's "str" method.
+            #
             self._draw.text((0, y),
-                f"{pageMenu[i].kitName}", font=self._font, fill=LCDMenu.textColorForIndex(i+1, self._selectedItem))
+                f"{str(pageMenu[i])}", font=self._font, fill=LCDMenu.textColorForIndex(i+1, self._selectedItem))
             y += self._fontHeight
-            if y > 240: # or we could just warn if items > 9
-                print("Warning! Menu item may have exceeded screen height!")
-        # Display image
+
+        # Display built image
         self._disp.image(self._image)
 
 
