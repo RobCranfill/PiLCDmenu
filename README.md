@@ -12,3 +12,6 @@ Each menu item is associated with an object that is passed back when that item i
 Here's what it looks like in action:
 
 ![screenshot](screenshot.jpg)
+
+
+My initial use for this is as a front-end for selecting drum kit samples on an SR18 drum machine. :-)
