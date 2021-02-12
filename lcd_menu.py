@@ -47,6 +47,7 @@ class LCDMenu:
         self._draw.rectangle((0, 0, self._width, self._height), outline=0, fill=(0, 0, 0))
         self._disp.image(self._image, self._rotation)
 
+
     def turnOffBacklight(self):
         """
         Turn off the display's backlight. Saves power; extends life?
@@ -57,20 +58,12 @@ class LCDMenu:
     ##################################################
     # Private methods
 
-    @staticmethod
-    def _init_button(pin):
-        button = digitalio.DigitalInOut(pin)
-        button.switch_to_input()
-        button.pull = digitalio.Pull.UP
-        return button
-
     def _setupGPIO(self):
         """
         Set up the RPi's GPIO pins to support the two pushbuttons on the display.
 
-        Button A is geometrically, and physically, above B. For now.
+        Button A is geometrically, and physically, above B. (For now - rotation?)
         """
-        global BUTTON_A_pin, BUTTON_B_pin
         BUTTON_A_pin = 24
         BUTTON_B_pin = 23
 
@@ -97,11 +90,10 @@ class LCDMenu:
 
         # Not 'next page' - it's an item selection.
         menuItemObj = self._menuPages[self._selectedPage][self._selectedItem-1]
-        # print(f" LCDMeeu -> SEND CC {ccObj.controlCode} ({ccObj.kitName})")
         self._callback(menuItemObj)
 
 
-    def _button_B_callback(self, channel):
+    def _button_B_callback(self, channelIsIgnored):
         """
         Iterrupt handler to deal with button B, "move the cursor" (selectedItem).
         """
@@ -115,6 +107,7 @@ class LCDMenu:
     @staticmethod
     def _textColorForIndex(index, selected):
         return "#FF0000" if index == selected else "#FFFFFF"
+
 
     def _drawWidgets(self, yTop):
         """ These are the non-text menu things.
@@ -138,8 +131,11 @@ class LCDMenu:
         s = 20
         self._draw.polygon( (x,y, x+s,y, x+s/2,y+s, x,y), fill="#FFFFFF")
 
-    # uses globals: selectedPage, selectedItem
+
     def _drawMenu(self):
+        """
+        Draw the screen with the new state of affairs - something new selected, or new page.
+        """
         self.clearScreen()
         y = self._yTop
 
@@ -165,13 +161,13 @@ class LCDMenu:
         # Display built image
         self._disp.image(self._image)
 
+
     def _initDisplay(self):
-        ############################################################
+        """
+        Set up the display board.
+
+        """
         # Create the ST7789 display object
-
-        # global _disp, _draw, _width, _height, _image, _rotation, _yTop, _font, _fontHeight
-        # global _backlight
-
         self._disp = st7789.ST7789(
             board.SPI(),
             cs=digitalio.DigitalInOut(board.CE0),
@@ -182,27 +178,26 @@ class LCDMenu:
             height=240,
             x_offset=0,
             y_offset=80,
+
         )
+
         # for convenience
         self._width  = self._disp.height
         self._height = self._disp.width
 
         self._image = Image.new("RGB", (self._width, self._height))
-        self._rotation = 0
         self._draw = ImageDraw.Draw(self._image)
-
-        buttonA = self._init_button(board.D23)
-        buttonB = self._init_button(board.D24)
+        self._rotation = 0
 
         self.clearScreen()
-        self._setupGPIO()
-
         padding = -2
         self._yTop = padding
         bottom = self._height - padding
 
         self._font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 24)
         self._fontHeight = self._font.getsize("X")[1]
+
+        self._setupGPIO()
 
         # Turn on the backlight
         self._backlight = digitalio.DigitalInOut(board.D22)
