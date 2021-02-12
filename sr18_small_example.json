@@ -1,0 +1,20 @@
+[
+[
+  ["Rock01", 69], ["Rock02", 58], ["Rock03", 59], ["Rock04", 60], ["Rock05", 61], ["Rock06", 62]
+],
+
+[
+ ["Techno01", 78], ["Techno02", 79], ["Techno03", 80], ["Techno04", 81], ["Techno05", 82],
+ ["Techno06", 83], ["Techno07", 84], ["Techno08", 85], ["Techno09", 86]
+],
+
+[
+ ["ElecTR08", 15], ["ElecTR09", 16], ["Dance02", 10], ["Dance03", 11], ["Disco02", 14],
+ ["Ethno01", 17], ["EthnoTek", 18]
+],
+
+[
+ ["Funk01", 19], ["Funk02", 20], ["Funk03", 21], ["HipHop1", 27], ["HipHop2", 28],
+ ["HipHop3", 29], ["HipHop4", 30], ["HipHop5", 31]
+]
+]
