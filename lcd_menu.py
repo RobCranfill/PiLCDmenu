@@ -78,6 +78,9 @@ class LCDMenu:
         self._draw.rectangle((0, 0, self._width, self._height), outline=0, fill=(0, 0, 0))
         self._disp.image(self._image, self._rotation)
 
+    def turnOffBacklight(self):
+        self._backlight.value = False
+
     @staticmethod
     def textColorForIndex(index, selected):
         return "#FF0000" if index == selected else "#FFFFFF"

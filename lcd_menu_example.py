@@ -4,6 +4,7 @@
 from midi_cc import MidiCC
 from lcd_menu import LCDMenu
 import time
+import threading
 
 
 def loadFile(filename):
@@ -33,12 +34,13 @@ if __name__ == "__main__":
     menuData = loadFile("sr18_small_example.json")
     menu = LCDMenu(menuData, callbackHandler)
 
+    # We create this event to wait on, but it never comes. How sad.
+    # This program is interrupt driven.
+    waitThread = threading.Event()
+
     try:
-        # TODO not really needed - replace with some kind of wait?
-        while True:
-            menu.drawMenu()
-            # print("(main loop sleeping)")
-            time.sleep(6000)
+        menu.drawMenu()
+        waitThread.wait()
     except KeyboardInterrupt:
         menu.clearScreen()
-        menu._backlight.value = False
+        menu.turnOffBacklight()
