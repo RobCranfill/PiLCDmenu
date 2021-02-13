@@ -9,12 +9,11 @@ import adafruit_rgb_display.st7789 as st7789
 import RPi.GPIO as GPIO
 
 class LCDMenu:
-    """
-    Being a class that implements an easy-to-use simple menu system for the Adafruit 1.3" LCD display.
+    """ Being a class that implements an easy-to-use simple menu system for the Adafruit 1.3" LCD display.
 
 
     """
-    def __init__(self, menuDataListOfLists, callback):
+    def __init__(self, menuDataListOfLists, callback, rotation=0):
         """
         Constructor takes the data structure for the items to display, and the method to call back.
 
@@ -30,10 +29,13 @@ class LCDMenu:
         self._callback = callback
         self._menuPages = menuDataListOfLists
 
+        if rotation != 0 and rotation != 180:
+            print("AUGHHHHHHHHHHHHH!") # TODO: handle exception
+
         self._selectedPage = 0
         self._selectedItem = 0 # this could be the page-nav-item, or a menu-item
 
-        self._initDisplay()
+        self._initDisplay(rotation)
         self._drawMenu()
 
 
@@ -109,27 +111,46 @@ class LCDMenu:
         return "#FF0000" if index == selected else "#FFFFFF"
 
 
-    def _drawWidgets(self, yTop):
+    def _drawWidgets(self):
         """ These are the non-text menu things.
+
+        Return the X coord that the menu items can be drawn at.
         """
-        WIDGET_VERTICAL_X = 210
-        WIDGET_EXECUTE_Y  =  45
-        WIDGET_MOVE_Y     = 150
+        WIDGET_AREA_WIDTH =  30
+        WIDGET_EXECUTE_Y  =  60
+        WIDGET_MOVE_Y     = 165
+        HEADER_AREA_HEIGHT = 24
 
-        # header/menuitems separator
-        self._draw.line((0, self._yTop+1) + (WIDGET_VERTICAL_X, self._yTop+1), fill="#FFFFFF")
 
-        self._draw.line((WIDGET_VERTICAL_X, 0, WIDGET_VERTICAL_X, 240), fill="#FFFFFF")
+        # 'go to page #'/menu items horizontal separator
+        self._draw.line((0, HEADER_AREA_HEIGHT, self._width, HEADER_AREA_HEIGHT), fill="#FFFFFF")
 
-        x = WIDGET_VERTICAL_X + 6
+        # button widget vertical separator
+        # self._rotation == 0
+        widget_left_x = self._width - WIDGET_AREA_WIDTH
+        widget_separator_x = widget_left_x
+        if self._rotation == 180:
+            print(f"rot is {self._rotation}; re-arranging widgets")
+            widget_left_x = 0
+            widget_separator_x = WIDGET_AREA_WIDTH
+
+        self._draw.line((widget_separator_x, HEADER_AREA_HEIGHT, widget_separator_x, self._height),
+                        fill="#FFFFFF")
+
+        # the button icons
+        x = widget_left_x + 6
         y = WIDGET_EXECUTE_Y
         s = 20
         self._draw.polygon( (x,y, x+s,y+s/2, x,y+s, x,y), fill="#FFFFFF")
 
-        x = WIDGET_VERTICAL_X + 6
         y = WIDGET_MOVE_Y
         s = 20
         self._draw.polygon( (x,y, x+s,y, x+s/2,y+s, x,y), fill="#FFFFFF")
+
+        result = 0
+        if self._rotation == 180:
+            result = WIDGET_AREA_WIDTH
+        return result
 
 
     def _drawMenu(self):
@@ -137,32 +158,36 @@ class LCDMenu:
         Draw the screen with the new state of affairs - something new selected, or new page.
         """
         self.clearScreen()
+
+        # this gets us the left edge of the widget area
+        x = self._drawWidgets()
+
         y = self._yTop
 
         dispPage = self._selectedPage + 1 # the current page's "display" value - not zero-based
         nextP = dispPage + 1
         if nextP == len(self._menuPages)+1:
             nextP = 1
-        self._draw.text((30, y),
+        self._draw.text((0, y),
             f"Go to Page {nextP}", font=self._font, fill=LCDMenu._textColorForIndex(0, self._selectedItem))
         y += self._fontHeight
 
-        self._drawWidgets(y)
+        print(f"text left is {x}")
 
         pageMenu = self._menuPages[self._selectedPage]
         for i in range(len(pageMenu)):
 
             # This renders the menu item using it's "str" method.
             #
-            self._draw.text((0, y),
+            self._draw.text((x, y),
                 f"{str(pageMenu[i])}", font=self._font, fill=LCDMenu._textColorForIndex(i+1, self._selectedItem))
             y += self._fontHeight
 
         # Display built image
-        self._disp.image(self._image)
+        self._disp.image(self._image, self._rotation)
 
 
-    def _initDisplay(self):
+    def _initDisplay(self, rotation=0):
         """
         Set up the display board.
 
@@ -178,7 +203,6 @@ class LCDMenu:
             height=240,
             x_offset=0,
             y_offset=80,
-
         )
 
         # for convenience
@@ -187,7 +211,7 @@ class LCDMenu:
 
         self._image = Image.new("RGB", (self._width, self._height))
         self._draw = ImageDraw.Draw(self._image)
-        self._rotation = 0
+        self._rotation = rotation
 
         self.clearScreen()
         padding = -2

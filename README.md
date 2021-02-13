@@ -15,3 +15,8 @@ Here's what it looks like in action:
 
 
 My initial use for this is as a front-end for selecting drum kit samples on an SR18 drum machine. :-)
+
+Requirements
+* RPi, Raspian
+* LCD displaye
+* Adafruit libraries: X, Y, Z
