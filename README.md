@@ -27,4 +27,5 @@ Requirements
   * adafruit_bus_device
   * adafruit_platformdetect
   * adafruit_rgb_display
-Some (all?) of these dependencies may come automagically with CircuitPython. Would someone like to document what-all needs to be installed, minimally?
+
+Some (all?) of the above dependencies may come automagically with CircuitPython. Would someone like to document what-all needs to be installed, minimally?
