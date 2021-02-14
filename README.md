@@ -13,13 +13,18 @@ Here's what it looks like in action:
 
 ![screenshot](screenshot.jpg)
 
-
 My initial use for this is as a front-end for selecting drum kit samples on an SR18 drum machine. :-)
 
 Requirements
-* RPi, Raspian
+* Raspberry Pi and Raspbian OS (I used 10/Buster) or some other Linux would probably be fine
+* Python 3.7 (?) or better (I used 3.7.3)
 * [Adafruit 1.3" TFT LCD](https://www.adafruit.com/product/4484)
+* Python Imaging Library - I used 'Pillow', a fork by Alex Clark and contributors (https://github.com/python-pillow/Pillow/)
 * Adafruit libraries:
-  * CircuitPython?
-  * Python Imaging Library (not Adafruit, I know)
-  * Plus some others - help me out here..... (take a look at the "import" statements, that'll give you some clue....)
+  * [CircuitPython](https://github.com/adafruit/circuitpython)
+  * Adafruit_PureIO
+  * adafruit_blinka
+  * adafruit_bus_device
+  * adafruit_platformdetect
+  * adafruit_rgb_display
+Some (all?) of these dependencies may come automagically with CircuitPython. Would someone like to document what-all needs to be installed, minimally?
