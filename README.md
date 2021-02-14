@@ -18,5 +18,8 @@ My initial use for this is as a front-end for selecting drum kit samples on an S
 
 Requirements
 * RPi, Raspian
-* LCD displaye
-* Adafruit libraries: X, Y, Z
+* [Adafruit 1.3" TFT LCD](https://www.adafruit.com/product/4484)
+* Adafruit libraries:
+ * CircuitPython?
+ * Python Imaging Library (not Adafruit, I know)
+ * Plus some others - help me out here..... (take a look at the "import" statements, that'll give you some clue....)
