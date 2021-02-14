@@ -9,7 +9,7 @@ import threading
 
 def loadFile(filename):
     """
-    Load the indicated JSON file.
+    Load the indicated JSON file into a list of lists of MIDI objects.
     """
     print(f"Parsing JSON file '{filename}'....")
     f = open(filename, "r")
@@ -22,6 +22,10 @@ def callbackHandler(midicc_obj):
     """
     This is the method that will be invoked when the "do it" button is pressed.
     """
+
+    # Since this is just an example, we will just print out the selected item,
+    # instead of actually doing something with it.
+    #
     print(f"callbackHandler: got object of type {type(midicc_obj)}")
     print(f"callbackHandler: {midicc_obj}") # renders with 'str()'
     print(f"callbackHandler: '{midicc_obj.kitName}', CC {midicc_obj.controlCode}")
@@ -32,7 +36,7 @@ def callbackHandler(midicc_obj):
 if __name__ == "__main__":
 
     menuData = loadFile("sr18_small_example.json")
-    menu = LCDMenu(menuData, callbackHandler, rotation=0)
+    menu = LCDMenu(menuData, callbackHandler, buttonsOnRight=True)
 
     # We create this event to wait on, but it never comes. How sad.
     # (The menu handler, and this example, is interrupt driven.)

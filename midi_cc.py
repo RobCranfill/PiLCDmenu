@@ -21,6 +21,9 @@ class MidiCC:
 
     @staticmethod
     def decodeFromJSON(s):
+        """
+        Load the JSON data (in the form of a string) into a list of lists of MidiCC objects.
+        """
         result = []
         for i in json.loads(s):
             sublist = []

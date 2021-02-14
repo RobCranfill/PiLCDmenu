@@ -13,7 +13,7 @@ class LCDMenu:
 
 
     """
-    def __init__(self, menuDataListOfLists, callback, rotation=0):
+    def __init__(self, menuDataListOfLists, callback, buttonsOnRight=True):
         """
         Constructor takes the data structure for the items to display, and the method to call back.
 
@@ -24,18 +24,20 @@ class LCDMenu:
             via the next argument.
          callback: The method to call when an item is selected. That method must take
            one argument: the object that was selected.
-
+         buttonsOnRight: Boolean indicating which way the display is oriented.
         """
         self._callback = callback
         self._menuPages = menuDataListOfLists
 
-        if rotation != 0 and rotation != 180:
-            print("AUGHHHHHHHHHHHHH!") # TODO: handle exception
+        if buttonsOnRight:
+            self._rotation = 0
+        else:
+            self._rotation = 180
 
         self._selectedPage = 0
         self._selectedItem = 0 # this could be the page-nav-item, or a menu-item
 
-        self._initDisplay(rotation)
+        self._initDisplay()
         self._drawMenu()
 
 
@@ -116,7 +118,7 @@ class LCDMenu:
 
 
     def _drawWidgets(self):
-        """ These are the non-text menu things.
+        """ These are the non-text things: two separator lines and two button icons.
 
         Return the X coord that the menu items can be drawn at.
         """
@@ -130,10 +132,12 @@ class LCDMenu:
         self._draw.line((0, HEADER_AREA_HEIGHT, self._width, HEADER_AREA_HEIGHT), fill="#FFFFFF")
 
         # button widget vertical separator
-        # self._rotation == 0
-        widget_left_x = self._width - WIDGET_AREA_WIDTH
-        widget_separator_x = widget_left_x
-        if self._rotation == 180:
+        if self._rotation == 0:
+            print("Rotation is 0");
+            widget_left_x = self._width - WIDGET_AREA_WIDTH
+            widget_separator_x = widget_left_x
+        else:
+            print("Rotation is 180");
             widget_left_x = 0
             widget_separator_x = WIDGET_AREA_WIDTH
 
@@ -188,7 +192,7 @@ class LCDMenu:
         self._disp.image(self._image, self._rotation)
 
 
-    def _initDisplay(self, rotation=0):
+    def _initDisplay(self):
         """
         Set up the display board.
 
@@ -212,7 +216,6 @@ class LCDMenu:
 
         self._image = Image.new("RGB", (self._width, self._height))
         self._draw = ImageDraw.Draw(self._image)
-        self._rotation = rotation
 
         self.clearScreen()
         padding = -2
