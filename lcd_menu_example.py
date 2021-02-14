@@ -32,7 +32,7 @@ def callbackHandler(midicc_obj):
 if __name__ == "__main__":
 
     menuData = loadFile("sr18_small_example.json")
-    menu = LCDMenu(menuData, callbackHandler, rotation=180)
+    menu = LCDMenu(menuData, callbackHandler, rotation=0)
 
     # We create this event to wait on, but it never comes. How sad.
     # (The menu handler, and this example, is interrupt driven.)

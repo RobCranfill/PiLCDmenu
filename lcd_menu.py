@@ -72,8 +72,12 @@ class LCDMenu:
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(BUTTON_A_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(BUTTON_B_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.add_event_detect(BUTTON_A_pin, GPIO.FALLING, callback=self._button_A_callback, bouncetime=300)
-        GPIO.add_event_detect(BUTTON_B_pin, GPIO.FALLING, callback=self._button_B_callback, bouncetime=300)
+        if self._rotation == 0:
+            GPIO.add_event_detect(BUTTON_A_pin, GPIO.FALLING, callback=self._button_A_callback, bouncetime=300)
+            GPIO.add_event_detect(BUTTON_B_pin, GPIO.FALLING, callback=self._button_B_callback, bouncetime=300)
+        else: # is this confusing?
+            GPIO.add_event_detect(BUTTON_A_pin, GPIO.FALLING, callback=self._button_B_callback, bouncetime=300)
+            GPIO.add_event_detect(BUTTON_B_pin, GPIO.FALLING, callback=self._button_A_callback, bouncetime=300)
 
 
     def _button_A_callback(self, channelIsIgnored):
@@ -130,7 +134,6 @@ class LCDMenu:
         widget_left_x = self._width - WIDGET_AREA_WIDTH
         widget_separator_x = widget_left_x
         if self._rotation == 180:
-            print(f"rot is {self._rotation}; re-arranging widgets")
             widget_left_x = 0
             widget_separator_x = WIDGET_AREA_WIDTH
 
@@ -171,8 +174,6 @@ class LCDMenu:
         self._draw.text((0, y),
             f"Go to Page {nextP}", font=self._font, fill=LCDMenu._textColorForIndex(0, self._selectedItem))
         y += self._fontHeight
-
-        print(f"text left is {x}")
 
         pageMenu = self._menuPages[self._selectedPage]
         for i in range(len(pageMenu)):
