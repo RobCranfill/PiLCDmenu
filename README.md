@@ -20,6 +20,6 @@ Requirements
 * RPi, Raspian
 * [Adafruit 1.3" TFT LCD](https://www.adafruit.com/product/4484)
 * Adafruit libraries:
- * CircuitPython?
- * Python Imaging Library (not Adafruit, I know)
- * Plus some others - help me out here..... (take a look at the "import" statements, that'll give you some clue....)
+  * CircuitPython?
+  * Python Imaging Library (not Adafruit, I know)
+  * Plus some others - help me out here..... (take a look at the "import" statements, that'll give you some clue....)
