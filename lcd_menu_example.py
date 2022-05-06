@@ -44,32 +44,35 @@ def loadFile(filename):
     return MidiCC.decodeFromJSON(fcontents)
 
 
+def tidyUp():
+    menu.clearScreen()
+    menu.turnOffBacklight()
+
+
 def callbackHandler(menu_obj):
     """
     This is the method that will be invoked when the "do it" button is pressed.
     """
-    print(f"callbackHandler: got object of type {type(menu_obj)}")
+    # print(f"callbackHandler: got object of type {type(menu_obj)}")
 
     if (isinstance(menu_obj, LCDAction)):
-        print("It's an action!")
         if (menu_obj.magicActionThing == LCDAction.ACTION_EXIT):
             print("Exiting....")
-            menu.clearScreen()
-            menu.turnOffBacklight()
+            tidyUp()
             sys.exit(LCDAction.ACTION_EXIT)
         elif (menu_obj.magicActionThing == LCDAction.ACTION_SHUT_DOWN):
             print("Halting system....")
-            menu.clearScreen()
-            menu.turnOffBacklight()
+            tidyUp()
             os.system('sudo shutdown -h now')
         else:
             print("Unknown action: ", menu_obj) # shouldn't happen
         return
     
+    # Must be a MIDI thing.
     # Since this is just an example, we will simply print out the selected item,
     # instead of actually doing something with it.
     #
-    print(f"callbackHandler: {menu_obj}") # renders with 'str()'
+    # print(f"callbackHandler: {menu_obj}") # renders with 'str()'
     print(f"callbackHandler: '{menu_obj.kitName}', CC {menu_obj.controlCode}")
 
 
@@ -105,5 +108,5 @@ if __name__ == "__main__":
         waitThread.wait()
     except KeyboardInterrupt:
         print("\nExiting....")
-        menu.clearScreen()
-        menu.turnOffBacklight()
+        tidyUp()
+
