@@ -1,0 +1,23 @@
+Things to Do for PiLCDMenu project
+
+Capabilities
+
+* Menu actions
+  - Shut down Pi
+  - Restart Pi ?
+  - Exit app ?
+ -> "shutdown" should suffice
+
+  - catch signal for shutdown, clear screen
+  - send PID to pid file?
+  - SIGTERM seems to work (tho it's not handled yet), as does 9 (KILL?)
+
+* Refactoring
+  - MidiCC object should be in AlesisSR project, not PiLCDMenu
+    - need new object for demo code?
+
+lcd_menu.py - "# FIXME: NOT separated from the LCD drawing stuff." ?
+
+* Questions
+  - what happens if run more than once (at a time)? check?
+

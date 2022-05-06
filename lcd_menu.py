@@ -1,5 +1,4 @@
-#!/bin/python3
-# a wrapper for LCD menus
+# An easy-to-use simple menu system for the Adafruit 1.3" LCD display
 # FIXME: NOT separated from the LCD drawing stuff.
 
 import digitalio
@@ -9,13 +8,13 @@ import adafruit_rgb_display.st7789 as st7789
 import RPi.GPIO as GPIO
 
 class LCDMenu:
-    """ Being a class that implements an easy-to-use simple menu system for the Adafruit 1.3" LCD display.
-
-
+    """ Being a class that implements an easy-to-use simple menu system
+        for the Adafruit 1.3" LCD display.
     """
     def __init__(self, menuDataListOfLists, callback, buttonsOnRight=True):
         """
-        Constructor takes the data structure for the items to display, and the method to call back.
+        Constructor takes the data structure for the items to display, 
+        and the method to call back.
 
         Argments:
           menuDataListOfLists: A list of lists of objects. Each top-level list is a page
@@ -133,11 +132,11 @@ class LCDMenu:
 
         # button widget vertical separator
         if self._rotation == 0:
-            print("Rotation is 0");
+            # print("Rotation is 0");
             widget_left_x = self._width - WIDGET_AREA_WIDTH
             widget_separator_x = widget_left_x
         else:
-            print("Rotation is 180");
+            # print("Rotation is 180");
             widget_left_x = 0
             widget_separator_x = WIDGET_AREA_WIDTH
 
