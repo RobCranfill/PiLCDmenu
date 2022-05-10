@@ -37,8 +37,7 @@ def loadFile(filename):
     Load the indicated JSON file into a list of lists of MIDI objects.
     """
     print(f"Parsing JSON file '{filename}'....")
-    f = open(filename, "r")
-    fcontents = f.read()
+    fcontents = open(filename, "r").read()
     # print(f" read: {fcontents}\n")
     # print(f" json: {json.loads(fcontents)}\n")
     return MidiCC.decodeFromJSON(fcontents)
@@ -55,12 +54,12 @@ def callbackHandler(menu_obj):
     """
     # print(f"callbackHandler: got object of type {type(menu_obj)}")
 
-    if (isinstance(menu_obj, LCDAction)):
-        if (menu_obj.magicActionThing == LCDAction.ACTION_EXIT):
+    if isinstance(menu_obj, LCDAction):
+        if menu_obj.magicActionThing == LCDAction.ACTION_EXIT:
             print("Exiting....")
             tidyUp()
             sys.exit(LCDAction.ACTION_EXIT)
-        elif (menu_obj.magicActionThing == LCDAction.ACTION_SHUT_DOWN):
+        elif menu_obj.magicActionThing == LCDAction.ACTION_SHUT_DOWN:
             print("Halting system....")
             tidyUp()
             os.system('sudo shutdown -h now')
@@ -78,6 +77,7 @@ def callbackHandler(menu_obj):
 
 # Handler for 'die' signal.
 def gotSIGWhatever(foo, fum):
+    # If we get the signal, process an EXIT action.
     callbackHandler(LCDAction("mox nix", LCDAction.ACTION_EXIT))
 
 
@@ -90,7 +90,7 @@ if __name__ == "__main__":
 
     # ...and this adds one item to the last menu page: shut down the machine.
     menuData.append([LCDAction("Exit menu app", LCDAction.ACTION_EXIT),
-                    LCDAction("Shut down Pi", LCDAction.ACTION_SHUT_DOWN)])
+                     LCDAction("Shut down Pi",  LCDAction.ACTION_SHUT_DOWN)])
     print("Menu data:\n", menuData)
 
     menu = LCDMenu(menuData, callbackHandler, buttonsOnRight=True)

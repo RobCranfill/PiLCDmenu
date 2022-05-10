@@ -1,4 +1,4 @@
-#!/bin/python3
+#!/usr/bin/python3
 # Being a thing what encapsulates the name of a drum kit, and the corresponding MIDI Control Code.
 #
 import json

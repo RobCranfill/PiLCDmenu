@@ -7,6 +7,10 @@ from PIL import Image, ImageDraw, ImageFont
 import adafruit_rgb_display.st7789 as st7789
 import RPi.GPIO as GPIO
 
+REGULAR_COLOR = "#FFFFFF"
+HIGHLIGHT_COLOR = "#FF0000"
+
+
 class LCDMenu:
     """ Being a class that implements an easy-to-use simple menu system
         for the Adafruit 1.3" LCD display.
@@ -113,7 +117,7 @@ class LCDMenu:
 
     @staticmethod
     def _textColorForIndex(index, selected):
-        return "#FF0000" if index == selected else "#FFFFFF"
+        return HIGHLIGHT_COLOR if index == selected else REGULAR_COLOR
 
 
     def _drawWidgets(self):
@@ -128,7 +132,7 @@ class LCDMenu:
 
 
         # 'go to page #'/menu items horizontal separator
-        self._draw.line((0, HEADER_AREA_HEIGHT, self._width, HEADER_AREA_HEIGHT), fill="#FFFFFF")
+        self._draw.line((0, HEADER_AREA_HEIGHT, self._width, HEADER_AREA_HEIGHT), fill=REGULAR_COLOR)
 
         # button widget vertical separator
         if self._rotation == 0:
@@ -141,17 +145,17 @@ class LCDMenu:
             widget_separator_x = WIDGET_AREA_WIDTH
 
         self._draw.line((widget_separator_x, HEADER_AREA_HEIGHT, widget_separator_x, self._height),
-                        fill="#FFFFFF")
+                        fill=REGULAR_COLOR)
 
         # the button icons
         x = widget_left_x + 6
         y = WIDGET_EXECUTE_Y
         s = 20
-        self._draw.polygon( (x,y, x+s,y+s/2, x,y+s, x,y), fill="#FFFFFF")
+        self._draw.polygon( (x,y, x+s,y+s/2, x,y+s, x,y), fill=HIGHLIGHT_COLOR)
 
         y = WIDGET_MOVE_Y
         s = 20
-        self._draw.polygon( (x,y, x+s,y, x+s/2,y+s, x,y), fill="#FFFFFF")
+        self._draw.polygon( (x,y, x+s,y, x+s/2,y+s, x,y), fill=REGULAR_COLOR)
 
         result = 0
         if self._rotation == 180:
