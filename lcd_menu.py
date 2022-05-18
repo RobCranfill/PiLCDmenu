@@ -126,8 +126,8 @@ class LCDMenu:
         Return the X coord that the menu items can be drawn at.
         """
         WIDGET_AREA_WIDTH =  30
-        WIDGET_EXECUTE_Y  =  60
-        WIDGET_MOVE_Y     = 165
+        WIDGET_EXECUTE_Y  =  50
+        WIDGET_MOVE_Y     = 150
         HEADER_AREA_HEIGHT = 24
 
 
