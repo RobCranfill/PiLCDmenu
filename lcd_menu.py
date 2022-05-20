@@ -3,12 +3,12 @@
 
 import board
 import digitalio
-import json
 from PIL import Image, ImageDraw, ImageFont
 import adafruit_rgb_display.st7789 as st7789
 import RPi.GPIO as GPIO
 
-REGULAR_COLOR = "#FFFFFF"
+
+REGULAR_COLOR   = "#FFFFFF"
 HIGHLIGHT_COLOR = "#FF0000"
 
 WIDGET_AREA_WIDTH  =  30
@@ -214,24 +214,17 @@ class LCDMenu:
         y = self._yTop
 
         pageMenu = self._menuData.pages[self._selectedPage]
-        pageTitle = pageMenu.title
 
-        # dispPage = self._selectedPage + 1 # the current page's "display" value - not zero-based
-        # nextP = dispPage + 1
-        # if nextP == len(self._menuPages)+1:
-        #     nextP = 1
-        # self._draw.text((0, y),
-        #     f"Go to Page {nextP}", font=self._font, fill=LCDMenu._textColorForIndex(0, self._selectedItem))
+        self._draw.text((0, y), pageMenu.title, font=self._font, fill=REGULAR_COLOR)
 
-        self._draw.text((0, y), pageTitle, font=self._font, fill=REGULAR_COLOR)
-
+        # TODO: draw a right-arrow triangle, like the button?
         self._draw.text((150, y),
             f"NEXT", font=self._font, fill=LCDMenu._textColorForIndex(0, self._selectedItem))
 
         y += self._fontHeight
         for i in range(len(pageMenu.objects)):
 
-            # This renders each menu item using its "str" method.
+            # This renders each menu item using its "str()" method.
             #
             self._draw.text((x, y),
                 f"{str(pageMenu.objects[i])}", font=self._font, fill=LCDMenu._textColorForIndex(i+1, self._selectedItem))

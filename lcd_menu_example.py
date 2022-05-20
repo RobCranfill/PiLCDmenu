@@ -2,13 +2,12 @@
 # Simple example.
 
 from lcd_menu import LCDMenu, menuPage, menuData
-# from midi_cc import MidiCC
 
-import time
-import threading
 import os # for shutting down the machine
 import signal
 import sys
+import threading
+import time
 
 
 class LCDAction():
@@ -33,17 +32,6 @@ class LCDAction():
         return self.__str__()
 
 
-# def loadFile(filename):
-#     """
-#     Load the indicated JSON file into a list of lists of MIDI objects.
-#     """
-#     print(f"Parsing JSON file '{filename}'....")
-#     fcontents = open(filename, "r").read()
-#     # print(f" read: {fcontents}\n")
-#     # print(f" json: {json.loads(fcontents)}\n")
-#     return MidiCC.decodeFromJSON(fcontents)
-
-
 def tidyUp():
     menu.clearScreen()
     menu.turnOffBacklight()
@@ -53,7 +41,6 @@ def callbackHandler(menu_obj):
     """
     This is the method that will be invoked when the "do it" button is pressed.
     """
-    # print(f"callbackHandler: got object of type {type(menu_obj)}")
 
     if isinstance(menu_obj, LCDAction):
         if menu_obj.magicActionThing == LCDAction.ACTION_EXIT:
@@ -68,12 +55,12 @@ def callbackHandler(menu_obj):
             print("Unknown action: ", menu_obj) # shouldn't happen
         return
     
-    # Must be a MIDI thing.
+    # Must be one of the 'regular' menu items.
+    # You could check its type and Do The Right Thing with it.
     # Since this is just an example, we will simply print out the selected item,
     # instead of actually doing something with it.
     #
     print(f"callbackHandler: {menu_obj}") # renders with 'str()'
-    # print(f"callbackHandler: '{menu_obj.kitName}', CC {menu_obj.controlCode}")
 
 
 # Handler for 'die' signal.
@@ -86,13 +73,8 @@ def gotSIGWhatever(foo, fum):
 #
 if __name__ == "__main__":
 
-    # # This loads a list of lists of MIDI actions...
-    # menuData = loadFile("sr18_small_example.json")
-
     # create some simple data...
     p1 = menuPage("Page One", ["Thing A", "Thing B", "Thing C"])
-    print(f"First page: {p1}")
-
     p2 = menuPage("Page Two", ["Alpha", "Beta", "Gamma"])
 
     # ...and some fancier data.
@@ -101,15 +83,15 @@ if __name__ == "__main__":
       LCDAction("Shut down Pi",  LCDAction.ACTION_SHUT_DOWN)])
 
     data = menuData([p1, p2, p3])
-    print(f"Menu data: {data}")
+
     menu = LCDMenu(data, callbackHandler, buttonsOnRight=True)
 
     # When running headless, we can send this signal to stop the app.
-    # We are supposed to be able to send a SIGINT to get the same thing as ctrl-C,
-    # but it doesn't seem to work. SIGUSR1 works.
+    # (We are supposed to be able to send a SIGINT to get the same thing as ctrl-C,
+    # but it doesn't seem to work. SIGUSR1 works.)
     signal.signal(signal.SIGUSR1, gotSIGWhatever)
 
-    # We create this event to wait on, but it never comes. How sad.
+    # We create this event to wait on, but it never comes.
     # (The menu handler, and this example, is interrupt driven.)
     #
     waitThread = threading.Event()
@@ -118,4 +100,3 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\nExiting....")
         tidyUp()
-
