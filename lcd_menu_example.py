@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 # Simple example.
 
-from midi_cc import MidiCC
-from lcd_menu import LCDMenu
+from lcd_menu import LCDMenu, menuPage, menuData
+# from midi_cc import MidiCC
+
 import time
 import threading
 import os # for shutting down the machine
@@ -32,15 +33,15 @@ class LCDAction():
         return self.__str__()
 
 
-def loadFile(filename):
-    """
-    Load the indicated JSON file into a list of lists of MIDI objects.
-    """
-    print(f"Parsing JSON file '{filename}'....")
-    fcontents = open(filename, "r").read()
-    # print(f" read: {fcontents}\n")
-    # print(f" json: {json.loads(fcontents)}\n")
-    return MidiCC.decodeFromJSON(fcontents)
+# def loadFile(filename):
+#     """
+#     Load the indicated JSON file into a list of lists of MIDI objects.
+#     """
+#     print(f"Parsing JSON file '{filename}'....")
+#     fcontents = open(filename, "r").read()
+#     # print(f" read: {fcontents}\n")
+#     # print(f" json: {json.loads(fcontents)}\n")
+#     return MidiCC.decodeFromJSON(fcontents)
 
 
 def tidyUp():
@@ -71,8 +72,8 @@ def callbackHandler(menu_obj):
     # Since this is just an example, we will simply print out the selected item,
     # instead of actually doing something with it.
     #
-    # print(f"callbackHandler: {menu_obj}") # renders with 'str()'
-    print(f"callbackHandler: '{menu_obj.kitName}', CC {menu_obj.controlCode}")
+    print(f"callbackHandler: {menu_obj}") # renders with 'str()'
+    # print(f"callbackHandler: '{menu_obj.kitName}', CC {menu_obj.controlCode}")
 
 
 # Handler for 'die' signal.
@@ -85,15 +86,23 @@ def gotSIGWhatever(foo, fum):
 #
 if __name__ == "__main__":
 
-    # This loads a list of lists of MIDI actions...
-    menuData = loadFile("sr18_small_example.json")
+    # # This loads a list of lists of MIDI actions...
+    # menuData = loadFile("sr18_small_example.json")
 
-    # ...and this adds one item to the last menu page: shut down the machine.
-    menuData.append([LCDAction("Exit menu app", LCDAction.ACTION_EXIT),
-                     LCDAction("Shut down Pi",  LCDAction.ACTION_SHUT_DOWN)])
-    print("Menu data:\n", menuData)
+    # create some simple data...
+    p1 = menuPage("Page One", ["Thing A", "Thing B", "Thing C"])
+    print(f"First page: {p1}")
 
-    menu = LCDMenu(menuData, callbackHandler, buttonsOnRight=True)
+    p2 = menuPage("Page Two", ["Alpha", "Beta", "Gamma"])
+
+    # ...and some fancier data.
+    p3 = menuPage("Utils", 
+     [LCDAction("Exit menu app", LCDAction.ACTION_EXIT),
+      LCDAction("Shut down Pi",  LCDAction.ACTION_SHUT_DOWN)])
+
+    data = menuData([p1, p2, p3])
+    print(f"Menu data: {data}")
+    menu = LCDMenu(data, callbackHandler, buttonsOnRight=True)
 
     # When running headless, we can send this signal to stop the app.
     # We are supposed to be able to send a SIGINT to get the same thing as ctrl-C,

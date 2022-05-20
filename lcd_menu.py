@@ -1,8 +1,9 @@
 # An easy-to-use simple menu system for the Adafruit 1.3" LCD display
 # FIXME: NOT separated from the LCD drawing stuff.
 
-import digitalio
 import board
+import digitalio
+import json
 from PIL import Image, ImageDraw, ImageFont
 import adafruit_rgb_display.st7789 as st7789
 import RPi.GPIO as GPIO
@@ -10,18 +11,62 @@ import RPi.GPIO as GPIO
 REGULAR_COLOR = "#FFFFFF"
 HIGHLIGHT_COLOR = "#FF0000"
 
+WIDGET_AREA_WIDTH  =  30
+WIDGET_EXECUTE_Y   =  50
+WIDGET_MOVE_Y      = 150
+HEADER_AREA_HEIGHT =  24
+
+
+class menuPage:
+    """
+    One page's data.
+    The string is the page title; the item objects will be rendered using their str method.
+    """
+    def __init__(self, nameString, objectList):
+        self.title = nameString
+        self.objects = objectList
+
+    def __str__(self):
+        """This is the method that the menu code will use to render each item.
+        """
+        result = self.title + ": "
+        for o in self.objects:
+            result += ", " + o
+        return result
+
+    def __repr__(self):
+        return f"menuPage({self.nameString}, {self.itemObjectList})"
+        # return self.__str__()
+
+class menuData:
+    """
+    The whole structure to be passed to the menu display system.
+    """
+    def __init__(self, listOfMenuPages):
+        self.pages = listOfMenuPages
+
+    def __str__(self):
+        """This is the method that the menu code will use to render each item.
+        """
+        result = ""
+        for p in self.pages:
+            result += " " + p.title
+        return result
+
+    def __repr__(self):
+        return self.__str__()
 
 class LCDMenu:
     """ Being a class that implements an easy-to-use simple menu system
         for the Adafruit 1.3" LCD display.
     """
-    def __init__(self, menuDataListOfLists, callback, buttonsOnRight=True):
+    def __init__(self, menudata, callback, buttonsOnRight=True):
         """
         Constructor takes the data structure for the items to display, 
         and the method to call back.
 
         Argments:
-          menuDataListOfLists: A list of lists of objects. Each top-level list is a page
+          menuDataListOfLists: Basically a list of lists of objects. Each top-level list is a page
             of items to display; each item in the list will be displayed in the menu using
             its str() method. When an item is selected, it will be sent back to the caller
             via the next argument.
@@ -30,7 +75,7 @@ class LCDMenu:
          buttonsOnRight: Boolean indicating which way the display is oriented.
         """
         self._callback = callback
-        self._menuPages = menuDataListOfLists
+        self._menuData = menudata
 
         if buttonsOnRight:
             self._rotation = 0
@@ -94,13 +139,13 @@ class LCDMenu:
         # Next page?
         if self._selectedItem == 0:
             self._selectedPage += 1
-            if self._selectedPage == len(self._menuPages):
+            if self._selectedPage == len(self._menuData.pages):
                 self._selectedPage = 0
             self._drawMenu()
             return
 
         # Not 'next page' - it's an item selection.
-        menuItemObj = self._menuPages[self._selectedPage][self._selectedItem-1]
+        menuItemObj = self._menuData.pages[self._selectedPage].objects[self._selectedItem-1]
         self._callback(menuItemObj)
 
 
@@ -109,7 +154,7 @@ class LCDMenu:
         Iterrupt handler to deal with button B, "move the cursor" (selectedItem).
         """
         self._selectedItem += 1
-        if self._selectedItem == len(self._menuPages[self._selectedPage])+1:
+        if self._selectedItem == len(self._menuData.pages[self._selectedPage].objects)+1:
             self._selectedItem = 0
         # print(f"button B - selectedItem: {selectedItem}")
         self._drawMenu()
@@ -123,13 +168,8 @@ class LCDMenu:
     def _drawWidgets(self):
         """ These are the non-text things: two separator lines and two button icons.
 
-        Return the X coord that the menu items can be drawn at.
+        Returns the X coord that the menu items can be drawn at.
         """
-        WIDGET_AREA_WIDTH =  30
-        WIDGET_EXECUTE_Y  =  50
-        WIDGET_MOVE_Y     = 150
-        HEADER_AREA_HEIGHT = 24
-
 
         # 'go to page #'/menu items horizontal separator
         self._draw.line((0, HEADER_AREA_HEIGHT, self._width, HEADER_AREA_HEIGHT), fill=REGULAR_COLOR)
@@ -171,24 +211,30 @@ class LCDMenu:
 
         # this gets us the left edge of the widget area
         x = self._drawWidgets()
-
         y = self._yTop
 
-        dispPage = self._selectedPage + 1 # the current page's "display" value - not zero-based
-        nextP = dispPage + 1
-        if nextP == len(self._menuPages)+1:
-            nextP = 1
-        self._draw.text((0, y),
-            f"Go to Page {nextP}", font=self._font, fill=LCDMenu._textColorForIndex(0, self._selectedItem))
+        pageMenu = self._menuData.pages[self._selectedPage]
+        pageTitle = pageMenu.title
+
+        # dispPage = self._selectedPage + 1 # the current page's "display" value - not zero-based
+        # nextP = dispPage + 1
+        # if nextP == len(self._menuPages)+1:
+        #     nextP = 1
+        # self._draw.text((0, y),
+        #     f"Go to Page {nextP}", font=self._font, fill=LCDMenu._textColorForIndex(0, self._selectedItem))
+
+        self._draw.text((0, y), pageTitle, font=self._font, fill=REGULAR_COLOR)
+
+        self._draw.text((150, y),
+            f"NEXT", font=self._font, fill=LCDMenu._textColorForIndex(0, self._selectedItem))
+
         y += self._fontHeight
+        for i in range(len(pageMenu.objects)):
 
-        pageMenu = self._menuPages[self._selectedPage]
-        for i in range(len(pageMenu)):
-
-            # This renders the menu item using it's "str" method.
+            # This renders each menu item using its "str" method.
             #
             self._draw.text((x, y),
-                f"{str(pageMenu[i])}", font=self._font, fill=LCDMenu._textColorForIndex(i+1, self._selectedItem))
+                f"{str(pageMenu.objects[i])}", font=self._font, fill=LCDMenu._textColorForIndex(i+1, self._selectedItem))
             y += self._fontHeight
 
         # Display built image
@@ -198,7 +244,6 @@ class LCDMenu:
     def _initDisplay(self):
         """
         Set up the display board.
-
         """
         # Create the ST7789 display object
         self._disp = st7789.ST7789(

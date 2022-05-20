@@ -26,9 +26,10 @@ class MidiCC:
         """
         result = []
         for i in json.loads(s):
-            sublist = []
-            result.append(sublist)
-            for k in i:
+            pageName = i[0]
+            print(f"Name is {pageName}")
+            result.append(i[1])
+            for k in i[1]:
                 sublist.append(MidiCC(k[0], k[1]))
         return result
 
@@ -38,13 +39,12 @@ class MidiCC:
 #  a list of lists of tuples of a string (the kit name) and an integer (the MIDI control code).
 #
 # [
-# [
-#   ["Rock01", 57], ["Rock02", 58], ["Rock03", 59], ["Rock04", 60], ["Rock05", 61], ["Rock06", 62]
-# ],
-# [
-#  ["Techno01", 78], ["Techno02", 79], ["Techno03", 80], ["Techno04", 81], ["Techno05", 82],
-#  ["Techno06", 83], ["Techno07", 84], ["Techno08", 85], ["Techno09", 86]
-# ],
+#   [
+#     "Rock Kit", [["Rock01", 69], ["Rock02", 58], ["Rock03", 59], ["Rock04", 60], ["Rock05", 61], ["Rock06", 62]]
+#   ],
+#   [
+#     "Techno", [["Techno01", 78], ["Techno02", 79], ["Techno03", 80], ["Techno04", 81], ["Techno05", 82]]
+#   ]
 # ]
 #
 if __name__ =="__main__":

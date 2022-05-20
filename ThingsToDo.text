@@ -2,6 +2,20 @@ Things to Do for PiLCDMenu project
 
 Capabilities
 
+* Instead of automatically titling the pages, put that in the JSON:
+
+  [
+    [
+      "Rock Kits",
+      [["Rock01", 69], ["Rock02", 58], ["Rock03", 59], ["Rock04", 60], ["Rock05", 61], ["Rock06", 62]]
+    ],
+    [
+      "Electro Kits",
+      [["ElecTR08", 15], ["ElecTR09", 16], ["Dance02", 10], ["Dance03", 11], ["Disco02", 14], ["Ethno01", 17], ["EthnoTek", 18]]
+    ]
+  ]
+
+
 * Menu actions
   - Shut down Pi
   - Restart Pi ?
