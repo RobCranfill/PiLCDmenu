@@ -1,5 +1,6 @@
 # An easy-to-use simple menu system for the Adafruit 1.3" LCD display
-# FIXME: NOT separated from the LCD drawing stuff.
+# See https://github.com/RobCranfill/PiLCDmenu for more info.
+# (c)2022 robcranfill@robcranfill.net
 
 import board
 import digitalio
@@ -17,7 +18,7 @@ WIDGET_MOVE_Y      = 150
 HEADER_AREA_HEIGHT =  24
 
 
-class menuPage:
+class LCDMenuPage:
     """
     One page's data.
     The string is the page title; the item objects will be rendered using their str method.
@@ -27,7 +28,7 @@ class menuPage:
         self.objects = objectList
 
     def __str__(self):
-        """This is the method that the menu code will use to render each item.
+        """ Really only used for debugging.
         """
         result = self.title + ": "
         for o in self.objects:
@@ -35,10 +36,10 @@ class menuPage:
         return result
 
     def __repr__(self):
-        return f"menuPage({self.nameString}, {self.itemObjectList})"
+        return f"LCDM({self.nameString}, {self.itemObjectList})"
         # return self.__str__()
 
-class menuData:
+class LCDMenuData:
     """
     The whole structure to be passed to the menu display system.
     """
@@ -218,7 +219,7 @@ class LCDMenu:
         self._draw.text((0, y), pageMenu.title, font=self._font, fill=REGULAR_COLOR)
 
         # TODO: draw a right-arrow triangle, like the button?
-        self._draw.text((150, y),
+        self._draw.text((175, y),
             f"NEXT", font=self._font, fill=LCDMenu._textColorForIndex(0, self._selectedItem))
 
         y += self._fontHeight
