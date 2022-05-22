@@ -157,7 +157,7 @@ class LCDMenu:
         self._selectedItem += 1
         if self._selectedItem == len(self._menuData.pages[self._selectedPage].objects)+1:
             self._selectedItem = 0
-        # print(f"button B - selectedItem: {selectedItem}")
+        # print(f"button B - selectedItem: {self._selectedItem}")
         self._drawMenu()
 
 

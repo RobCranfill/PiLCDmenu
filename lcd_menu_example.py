@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # Simple example.
 
-from lcd_menu import LCDMenu, menuPage, menuData
+from lcd_menu import LCDMenu, LCDMenuPage, LCDMenuData
 
 import os # for shutting down the machine
 import signal
@@ -74,15 +74,15 @@ def gotSIGWhatever(foo, fum):
 if __name__ == "__main__":
 
     # create some simple data...
-    p1 = menuPage("Page One", ["Thing A", "Thing B", "Thing C"])
-    p2 = menuPage("Page Two", ["Alpha", "Beta", "Gamma"])
+    p1 = LCDMenuPage("Page One", ["Thing A", "Thing B", "Thing C"])
+    p2 = LCDMenuPage("Page Two", ["Alpha", "Beta", "Gamma"])
 
     # ...and some fancier data.
-    p3 = menuPage("Utils", 
+    p3 = LCDMenuPage("Utils", 
      [LCDAction("Exit menu app", LCDAction.ACTION_EXIT),
       LCDAction("Shut down Pi",  LCDAction.ACTION_SHUT_DOWN)])
 
-    data = menuData([p1, p2, p3])
+    data = LCDMenuData([p1, p2, p3])
 
     menu = LCDMenu(data, callbackHandler, buttonsOnRight=True)
 
