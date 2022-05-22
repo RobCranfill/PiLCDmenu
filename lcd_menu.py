@@ -17,6 +17,7 @@ WIDGET_EXECUTE_Y   =  50
 WIDGET_MOVE_Y      = 150
 HEADER_AREA_HEIGHT =  24
 
+MAX_MENU_ITEMS = 9
 
 class LCDMenuPage:
     """
@@ -86,6 +87,12 @@ class LCDMenu:
         self._selectedPage = 0
         self._selectedItem = 0 # this could be the page-nav-item, or a menu-item
 
+        # check for too-big a page
+        for p in menudata.pages:
+            if len(p.objects) > MAX_MENU_ITEMS:
+                print(f"Too many items in menu for page '{p.title}'; truncating.")
+                p.objects = p.objects[0:MAX_MENU_ITEMS]
+    
         self._initDisplay()
         self._drawMenu()
 

@@ -76,13 +76,14 @@ if __name__ == "__main__":
     # create some simple data...
     p1 = LCDMenuPage("Page One", ["Thing A", "Thing B", "Thing C"])
     p2 = LCDMenuPage("Page Two", ["Alpha", "Beta", "Gamma"])
+    p3 = LCDMenuPage("Too Many!", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
 
     # ...and some fancier data.
-    p3 = LCDMenuPage("Utils", 
+    p4 = LCDMenuPage("Utils", 
      [LCDAction("Exit menu app", LCDAction.ACTION_EXIT),
       LCDAction("Shut down Pi",  LCDAction.ACTION_SHUT_DOWN)])
 
-    data = LCDMenuData([p1, p2, p3])
+    data = LCDMenuData([p1, p2, p3, p4])
 
     menu = LCDMenu(data, callbackHandler, buttonsOnRight=True)
 
